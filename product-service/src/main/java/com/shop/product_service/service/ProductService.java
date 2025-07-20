@@ -46,6 +46,38 @@ public class ProductService extends ProductServiceImplBase {
     }
 
     @Override
+    public void deleteProduct(Product.ProductRequest request, StreamObserver<Empty> responseObserver) {
+        try {
+            Optional<com.shop.product_service.entity.Product> existingProduct = productRepository.findById(request.getId());
+
+            if (existingProduct.isEmpty()) {
+                logger.warn("Product with id {} not found", request.getId());
+
+                responseObserver.onError(
+                        Status.NOT_FOUND
+                                .withDescription("Product not found: id=" + request.getId())
+                                .asRuntimeException()
+                );
+                return;
+            }
+
+            com.shop.product_service.entity.Product product = existingProduct.get();
+            productRepository.deleteById(product.getId());
+            responseObserver.onNext(Empty.newBuilder().build());
+            responseObserver.onCompleted();
+        } catch (Exception e){
+            logger.error("deleteProduct() -> Exception: {}", e.getMessage(), e);
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Error when product delete")
+                            .augmentDescription(e.getMessage())
+                            .withCause(e)
+                            .asRuntimeException()
+            );
+        }
+    }
+
+    @Override
     public void updateProductStock(Product.ProductStockRequest request, StreamObserver<Empty> responseObserver) {
         try {
             Optional<com.shop.product_service.entity.Product> existProduct = productRepository.findById(request.getId());
@@ -54,7 +86,7 @@ public class ProductService extends ProductServiceImplBase {
 
                 responseObserver.onError(
                         Status.NOT_FOUND
-                                .withDescription("Ürün bulunamadı: id=" + request.getId())
+                                .withDescription("Product not found: id=" + request.getId())
                                 .asRuntimeException()
                 );
                 return;
@@ -65,10 +97,10 @@ public class ProductService extends ProductServiceImplBase {
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {
-            logger.error("updateProductStock() -> Hata oluştu: {}", e.getMessage(), e);
+            logger.error("updateProductStock() -> Exception: {}", e.getMessage(), e);
             responseObserver.onError(
                     Status.INTERNAL
-                            .withDescription("Ürün stoğu güncellenirken sunucu hatası")
+                            .withDescription("Error when product update stock")
                             .augmentDescription(e.getMessage())
                             .withCause(e)
                             .asRuntimeException()
@@ -91,10 +123,10 @@ public class ProductService extends ProductServiceImplBase {
             responseObserver.onCompleted();
 
         } catch (Exception e) {
-            logger.error("createProduct() -> Hata oluştu: {}", e.getMessage(), e);
+            logger.error("createProduct() -> Exception: {}", e.getMessage(), e);
             responseObserver.onError(
                     Status.INTERNAL
-                            .withDescription("Ürün oluşturulurken sunucu hatası")
+                            .withDescription("Error when product create")
                             .augmentDescription(e.getMessage())
                             .withCause(e)
                             .asRuntimeException()
