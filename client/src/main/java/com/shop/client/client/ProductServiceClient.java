@@ -37,4 +37,8 @@ public class ProductServiceClient {
     public Empty updateProductStock(Product.ProductStockRequest request){
         return stub.updateProductStock(request);
     }
+
+    public Empty deleteProduct(Product.ProductRequest request){
+        return stub.deleteProduct(request);
+    }
 }

@@ -27,18 +27,33 @@ public class ProductController {
     @GetMapping
     public List<ProductDto> getAllProducts() {
         List<Product.ProductResponse> products = productServiceClient.getAllProducts();
-        List<ProductDto> response  = products.stream()
+        List<ProductDto> response = products.stream()
                 .map(product ->
                         new ProductDto(
-                            product.getId(),
-                            product.getTitle(),
-                            product.getDescription(),
-                            product.getPrice(),
-                            product.getStock()
+                                product.getId(),
+                                product.getTitle(),
+                                product.getDescription(),
+                                product.getPrice(),
+                                product.getStock()
                         ))
                 .collect(Collectors.toList());
 
         return response;
+    }
+
+    @DeleteMapping("/delete-product/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable("productId") long productId) {
+        try {
+            logger.warn("Deleting product with id {}", productId);
+            Product.ProductRequest.Builder builder = Product.ProductRequest.newBuilder();
+            builder.setId(productId);
+            productServiceClient.deleteProduct(builder.build());
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            logger.warn(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/update-stock")
@@ -52,7 +67,7 @@ public class ProductController {
             productServiceClient.updateProductStock(builder.build());
 
             return ResponseEntity.ok().build();
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -71,7 +86,7 @@ public class ProductController {
 
             productServiceClient.createProduct(request);
             return ResponseEntity.ok().build();
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
         }

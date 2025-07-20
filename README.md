@@ -28,6 +28,11 @@ curl -X POST http://localhost:8081/api/products/update-stock \
     }'
 ```
 
+#### DeleteProduct
+```bash
+curl -X DELETE http://localhost:8081/api/products/delete-product/1
+```
+
 ### Product Service Grpcurl
 ```bash 
 grpcurl.exe -plaintext -d "{}" localhost:1111 com.shop.product.ProductService/GetAllProduct
