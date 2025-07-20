@@ -29,4 +29,12 @@ public class ProductServiceClient {
     public List<Product.ProductResponse> getAllProducts() {
         return stub.getAllProduct(Empty.getDefaultInstance()).getProductResponseList();
     }
+
+    public Empty createProduct(Product.CreateProductRequest request){
+        return stub.createProduct(request);
+    }
+
+    public Empty updateProductStock(Product.ProductStockRequest request){
+        return stub.updateProductStock(request);
+    }
 }

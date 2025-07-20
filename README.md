@@ -3,7 +3,29 @@
 ### Client Api Response
 #### GetAllProduct
 ```bash
-curl -plaintext -H "Content-Type: application/json" -d '{}' "http://localhost:8081/api/products"
+curl -X GET -H "Accept: application/json" "http://localhost:8081/api/products"
+```
+
+#### CreateProduct
+```bash
+curl -X POST http://localhost:8081/api/products/create \
+  -H "Content-Type: application/json" \
+  -d '{
+  "title": "Ultra Gaming Mouse",
+  "description": "Yuksek hassasiyetli oyuncu faresi",
+  "price": 899.99,
+  "stock": 150
+}'
+```
+
+#### UpdateProductStock
+```bash
+curl -X POST http://localhost:8081/api/products/update-stock \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id":1,
+    "stock":2
+    }'
 ```
 
 ### Product Service Grpcurl
